@@ -1,143 +1,568 @@
-# FastMockups - Bulk Product Mockup Generator
+# FastMockups - Advanced Bulk Product Mockup Generator
 
-A Python-based tool for automatically generating product mockups by compositing design images onto template backgrounds. Perfect for e-commerce, marketing materials, and product presentations.
+<div align="center">
+
+**Professional-grade mockup generation with AI-powered auto-detection, visual effects, and cloud integration**
+
+[![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[Features](#features) • [Installation](#installation) • [Quick Start](#quick-start) • [Web UI](#web-ui) • [Examples](#examples) • [Documentation](#documentation)
+
+</div>
+
+---
 
 ## Features
 
-- **Bulk Processing**: Generate multiple mockups from multiple designs and templates automatically
-- **High-Quality Output**: Uses Pillow with LANCZOS resampling for professional results
-- **Transparency Support**: Full RGBA support for designs with transparent backgrounds
-- **Configurable Placement**: Precise control over design positioning on each template
-- **Easy to Use**: Simple configuration and execution
+### Core Capabilities
+- **Bulk Processing**: Generate thousands of mockups from multiple designs and templates
+- **Multi-Format Export**: PNG, JPG, WebP, PDF with optimized quality settings
+- **High Performance**: Parallel processing with configurable worker threads
+- **Progress Tracking**: Real-time progress bars and statistics
+
+### Visual Effects
+- **Drop Shadows**: Customizable shadow effects with blur and opacity control
+- **Perspective Transforms**: Apply 3D perspective effects to mockups
+- **Image Filters**: Brightness, contrast, saturation, and sharpening
+
+### Smart Automation
+- **Auto-Detection**: AI-powered detection of design placement areas using computer vision
+- **Smart Fitting**: Automatic image scaling and positioning
+- **Batch Operations**: Process hundreds of files with a single command
+
+### Cloud Integration
+- **AWS S3 Support**: Direct upload to Amazon S3 buckets
+- **Google Cloud Storage**: Seamless GCS integration
+- **Public URL Generation**: Automatic public URL generation for uploaded mockups
+
+### User Interfaces
+- **Web UI**: Modern drag-and-drop web interface with real-time progress
+- **CLI**: Powerful command-line interface with full feature access
+- **API**: RESTful API for programmatic integration
+- **Python Library**: Import and use in your own Python projects
+
+---
 
 ## Installation
 
-1. Clone this repository:
+### Basic Installation
+
 ```bash
 git clone <repository-url>
 cd FastMockups
-```
-
-2. Install dependencies:
-```bash
 pip install -r requirements.txt
 ```
 
-## Folder Structure
+### Optional Dependencies
 
+For cloud storage support:
+```bash
+# AWS S3
+pip install boto3
+
+# Google Cloud Storage
+pip install google-cloud-storage
 ```
-FastMockups/
-├── bulk_mockup_generator.py  # Main script
-├── designs/                   # Place your design images here (PNG, JPG, JPEG)
-├── templates/                 # Place your product templates here (PNG)
-├── mockup_output/            # Generated mockups will be saved here
-├── requirements.txt          # Python dependencies
-└── README.md                # This file
+
+For auto-detection (already included in requirements.txt):
+```bash
+pip install opencv-python numpy
 ```
+
+---
 
 ## Quick Start
 
-### 1. Prepare Your Files
-
-**Add Design Images** to the `designs/` folder:
-- Supported formats: PNG, JPG, JPEG
-- RGBA/transparent designs recommended
-- Any resolution (will be resized to fit templates)
-
-**Add Template Images** to the `templates/` folder:
-- Format: PNG (with transparency if needed)
-- Examples: t-shirt mockups, mug templates, phone case backgrounds, etc.
-
-### 2. Configure Template Placements
-
-Edit `bulk_mockup_generator.py` and update the `template_placements` dictionary with your template coordinates:
+### Method 1: Simple Script (Beginner-Friendly)
 
 ```python
+from mockup_generator import MockupGenerator
+
+# Define where designs should be placed on templates
 template_placements = {
-    "template1.png": (100, 150, 400, 400),  # (x, y, width, height)
-    "template2.png": (50, 100, 350, 350),
+    "tshirt.png": (150, 200, 300, 300),  # (x, y, width, height)
+    "mug.png": (100, 150, 250, 250),
 }
+
+# Create generator
+generator = MockupGenerator(
+    design_folder="designs",
+    template_folder="templates",
+    output_folder="mockup_output",
+    template_placements=template_placements
+)
+
+# Generate mockups
+generator.generate_mockups()
 ```
 
-**How to find coordinates:**
-- x, y: Top-left corner position where design should start
-- width, height: Size the design should be resized to
-- Use an image editor to measure your template's design area
+### Method 2: With Auto-Detection (No Manual Placement)
 
-### 3. Run the Generator
+```python
+# Auto-detect design areas - no placement configuration needed!
+generator = MockupGenerator(
+    design_folder="designs",
+    template_folder="templates",
+    output_folder="mockup_output",
+    auto_detect=True  # Let AI find the placement areas
+)
+
+generator.generate_mockups()
+```
+
+### Method 3: Advanced CLI
 
 ```bash
-python bulk_mockup_generator.py
+python generate_mockups_advanced.py \
+    --config config/config.yaml \
+    --formats png jpg webp \
+    --upload-cloud
 ```
 
-The script will:
-1. Load all designs from `designs/` folder
-2. Load all templates from `templates/` folder
-3. Generate a mockup for each design × template combination
-4. Save results to `mockup_output/` with descriptive filenames
+### Method 4: Web UI
 
-## Output
-
-Mockups are saved with the naming pattern:
-```
-{design_name}_{template_name}_mockup.png
+```bash
+cd web_ui
+python app.py
 ```
 
-Example:
-- Design: `logo.png`
-- Template: `tshirt.png`
-- Output: `logo_tshirt_mockup.png`
+Then open `http://localhost:5000` in your browser.
 
-## Customization
+---
 
-### Adding New Templates
+## Web UI
 
-1. Add template PNG to `templates/` folder
-2. Update `template_placements` with coordinates:
+The web interface provides a modern, intuitive experience:
+
+### Features
+- Drag-and-drop file upload for designs and templates
+- Visual configuration of effects and settings
+- Real-time progress tracking
+- Preview and download generated mockups
+- Auto-detection toggle
+- Multi-format export selection
+- Cloud upload integration
+
+### Starting the Web UI
+
+```bash
+cd web_ui
+python app.py
+```
+
+Access at: `http://localhost:5000`
+
+---
+
+## Project Structure
+
+```
+FastMockups/
+├── mockup_generator/          # Core library
+│   ├── __init__.py
+│   ├── core.py               # Main generator
+│   ├── effects.py            # Visual effects (shadows, perspective)
+│   ├── formats.py            # Multi-format export
+│   ├── auto_detect.py        # AI-powered detection
+│   ├── cloud_storage.py      # S3, GCS integration
+│   └── config.py             # Configuration management
+├── web_ui/                    # Web interface
+│   ├── app.py                # Flask application
+│   └── templates/
+│       └── index.html        # UI template
+├── examples/                  # Example scripts
+│   ├── basic_usage.py
+│   ├── with_effects.py
+│   ├── auto_detection.py
+│   ├── cloud_upload.py
+│   └── config_based.py
+├── config/
+│   └── config.yaml           # Configuration file
+├── designs/                   # Your design images
+├── templates/                 # Your product templates
+├── mockup_output/            # Generated mockups
+├── bulk_mockup_generator.py  # Original simple script
+├── generate_mockups_advanced.py  # Advanced CLI script
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## Examples
+
+### Basic Usage
 
 ```python
-template_placements = {
-    "template1.png": (100, 150, 400, 400),
-    "your_new_template.png": (75, 200, 500, 500),  # Add this line
+from mockup_generator import MockupGenerator
+
+generator = MockupGenerator(
+    template_placements={
+        "tshirt.png": (150, 200, 300, 300),
+    }
+)
+generator.generate_mockups()
+```
+
+See: `examples/basic_usage.py`
+
+### With Visual Effects
+
+```python
+effects = {
+    "shadow": {
+        "offset": (8, 8),
+        "blur": 15,
+        "opacity": 0.6,
+    }
+}
+
+generator.generate_mockups(
+    effects=effects,
+    export_formats=["png", "jpg", "webp"]
+)
+```
+
+See: `examples/with_effects.py`
+
+### Auto-Detection
+
+```python
+from mockup_generator import MockupGenerator
+from mockup_generator.auto_detect import TemplateDetector
+from PIL import Image
+
+# Test detection on a template
+detector = TemplateDetector()
+template = Image.open("templates/tshirt.png")
+area = detector.detect_design_area(template)
+
+# Visualize detection
+viz = detector.visualize_detection(template, area)
+viz.save("detection_preview.png")
+
+# Generate with auto-detection
+generator = MockupGenerator(auto_detect=True)
+generator.generate_mockups()
+```
+
+See: `examples/auto_detection.py`
+
+### Cloud Upload
+
+```python
+from mockup_generator.cloud_storage import CloudStorageManager, create_s3_storage
+
+# Generate mockups
+generator.generate_mockups()
+
+# Upload to S3
+cloud_manager = CloudStorageManager()
+s3 = create_s3_storage("my-bucket", region="us-east-1")
+cloud_manager.add_provider('s3', s3)
+
+results = cloud_manager.upload_mockups(
+    Path("mockup_output"),
+    's3',
+    remote_folder='mockups'
+)
+```
+
+See: `examples/cloud_upload.py`
+
+### Configuration-Based
+
+```python
+from mockup_generator.config import Config
+
+config = Config("config/config.yaml")
+generator = MockupGenerator(
+    design_folder=config.get('folders.designs'),
+    template_placements=config.get_template_placements(),
+    auto_detect=config.is_auto_detection_enabled()
+)
+
+generator.generate_mockups(
+    effects=config.get_effects(),
+    export_formats=config.get_export_formats()
+)
+```
+
+See: `examples/config_based.py`
+
+---
+
+## Configuration
+
+### YAML Configuration File
+
+Edit `config/config.yaml`:
+
+```yaml
+folders:
+  designs: "designs"
+  templates: "templates"
+  output: "mockup_output"
+
+template_placements:
+  tshirt.png: [150, 200, 300, 300]
+
+auto_detection:
+  enabled: true
+  method: "contour"
+
+effects:
+  shadow:
+    enabled: true
+    offset: [5, 5]
+    blur_radius: 10
+    opacity: 0.5
+
+export:
+  formats: ["png", "jpg", "webp"]
+
+processing:
+  parallel: true
+  max_workers: 4
+
+cloud_storage:
+  enabled: false
+  provider: "s3"
+  s3:
+    bucket_name: "my-mockups"
+    region: "us-east-1"
+```
+
+---
+
+## API Reference
+
+### MockupGenerator
+
+```python
+from mockup_generator import MockupGenerator
+
+generator = MockupGenerator(
+    design_folder="designs",
+    template_folder="templates",
+    output_folder="mockup_output",
+    template_placements={},
+    auto_detect=False
+)
+
+results = generator.generate_mockups(
+    effects=None,
+    export_formats=["png"],
+    parallel=True,
+    max_workers=4,
+    progress_bar=True
+)
+```
+
+### Effects
+
+```python
+effects = {
+    "shadow": {
+        "offset": (x, y),
+        "blur": radius,
+        "opacity": 0.0-1.0
+    }
 }
 ```
 
-### Advanced Features (Future Extensions)
+### Export Formats
 
-The script can be extended with:
-- **Shadows & Effects**: Add drop shadows or perspective transforms
-- **Batch Processing UI**: Web interface for easier usage
-- **Cloud Integration**: Upload directly to cloud storage
-- **Multiple Export Formats**: Support for JPG, WebP, etc.
-- **Smart Fitting**: Auto-detect design areas on templates
-- **Watermarking**: Add branding to generated mockups
+Supported formats: `png`, `jpg`, `jpeg`, `webp`, `pdf`, `bmp`, `tiff`
+
+### Auto-Detection
+
+```python
+from mockup_generator.auto_detect import TemplateDetector
+
+detector = TemplateDetector()
+area = detector.detect_design_area(template_image)
+# Returns: (x, y, width, height)
+```
+
+---
+
+## Web API Endpoints
+
+When running the web UI, these endpoints are available:
+
+- `POST /api/upload/design` - Upload design images
+- `POST /api/upload/template` - Upload template images
+- `POST /api/generate` - Start mockup generation
+- `GET /api/job/<job_id>` - Check generation status
+- `GET /api/mockups` - List all generated mockups
+- `GET /api/mockups/<filename>` - Download a mockup
+- `POST /api/cloud/upload` - Upload to cloud storage
+- `POST /api/templates/detect` - Auto-detect design area
+
+---
+
+## Advanced Features
+
+### Parallel Processing
+
+Process mockups faster using multiple CPU cores:
+
+```python
+generator.generate_mockups(
+    parallel=True,
+    max_workers=8  # Use 8 CPU cores
+)
+```
+
+### Custom Effects
+
+```python
+from mockup_generator.effects import ShadowEffect, FilterEffect
+
+# Apply custom brightness/contrast
+effects = {
+    "shadow": {"blur": 20, "opacity": 0.7},
+}
+```
+
+### Cloud Storage
+
+#### AWS S3
+
+```python
+from mockup_generator.cloud_storage import create_s3_storage
+
+s3 = create_s3_storage(
+    bucket_name="my-bucket",
+    aws_access_key_id="...",
+    aws_secret_access_key="...",
+    region="us-east-1"
+)
+
+s3.upload_file(local_path, remote_path)
+```
+
+#### Google Cloud Storage
+
+```python
+from mockup_generator.cloud_storage import create_gcs_storage
+
+gcs = create_gcs_storage(
+    bucket_name="my-bucket",
+    credentials_path="service-account.json"
+)
+
+gcs.upload_file(local_path, remote_path)
+```
+
+---
+
+## Performance Tips
+
+1. **Use Parallel Processing**: Enable `parallel=True` for large batches
+2. **Optimize Workers**: Set `max_workers` to your CPU core count
+3. **Format Selection**: Only export formats you need
+4. **Auto-Detection**: Trades computation for convenience - use manual placement for production
+5. **Image Size**: Use appropriately sized templates (4K templates can slow processing)
+
+---
 
 ## Troubleshooting
 
-**"No placement info for template X"**
-- Add the template filename and coordinates to `template_placements` dictionary
+### No Placement Info Error
 
-**Images look pixelated**
-- Ensure your design images are high-resolution
-- Check that width/height in `template_placements` match your template's design area
+**Problem**: "No placement info for template X"
 
-**Script can't find designs/templates**
-- Verify files are in correct folders (`designs/` and `templates/`)
-- Check file extensions are supported (.png, .jpg, .jpeg for designs; .png for templates)
+**Solution**: Either:
+- Add manual placement to config: `template_placements = {"X": (x, y, w, h)}`
+- Enable auto-detection: `auto_detect=True`
+
+### Auto-Detection Not Working
+
+**Problem**: Detection fails or incorrect areas found
+
+**Solutions**:
+- Ensure template has clear design area
+- Try different detection methods: `method="color"` or `method="edge"`
+- Adjust area ratio: `min_area_ratio=0.1, max_area_ratio=0.5`
+- Use manual placement as fallback
+
+### Low Quality Output
+
+**Problem**: Mockups look pixelated
+
+**Solutions**:
+- Use high-resolution design images (2000px+)
+- Check template placement size matches template design area
+- Increase export quality in config
+- Use lossless formats (PNG, TIFF)
+
+### Slow Processing
+
+**Problem**: Generation takes too long
+
+**Solutions**:
+- Enable parallel processing
+- Increase `max_workers`
+- Reduce export formats
+- Use smaller template images
+- Disable expensive effects
+
+### Cloud Upload Fails
+
+**Problem**: Can't upload to S3/GCS
+
+**Solutions**:
+- Check credentials are configured
+- Verify bucket name and permissions
+- Test connection with AWS CLI / gcloud CLI
+- Check internet connectivity
+
+---
 
 ## Requirements
 
 - Python 3.7+
-- Pillow (PIL) library
+- Pillow >= 10.0.0
+- OpenCV >= 4.8.0 (for auto-detection)
+- NumPy >= 1.24.0
+- tqdm >= 4.66.0 (progress bars)
+- Flask >= 3.0.0 (web UI)
+- PyYAML >= 6.0.0 (configuration)
 
-## License
-
-This project is open source and available for use in your projects.
-
-## Contributing
-
-Contributions are welcome! Feel free to submit issues or pull requests.
+Optional:
+- boto3 >= 1.28.0 (AWS S3)
+- google-cloud-storage >= 2.10.0 (GCS)
 
 ---
 
-**Built with Claude Code** - Fast, automated mockup generation for your products.
+## License
+
+MIT License - free for commercial and personal use.
+
+---
+
+## Contributing
+
+Contributions welcome! Areas for improvement:
+
+- Additional cloud providers (Azure, DigitalOcean Spaces)
+- More visual effects (gradients, patterns)
+- Video mockup support
+- GUI desktop application
+- Batch API for enterprise use
+
+---
+
+## Support
+
+- Documentation: This README
+- Examples: See `examples/` directory
+- Issues: [GitHub Issues](https://github.com/your-repo/issues)
+
+---
+
+**Built with Claude Code** - Professional mockup generation made simple.
+

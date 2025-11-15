@@ -1,4 +1,25 @@
-# Bulk Product Mockup Generator Dependencies
+# FastMockups - Advanced Bulk Product Mockup Generator Dependencies
 
-# Pillow - Python Imaging Library for image processing
+# Core image processing
 Pillow>=10.0.0
+
+# Computer vision for auto-detection
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+# Progress bars
+tqdm>=4.66.0
+
+# Web UI
+Flask>=3.0.0
+Flask-CORS>=4.0.0
+
+# Configuration
+PyYAML>=6.0.0
+
+# Cloud storage (optional - install as needed)
+boto3>=1.28.0  # AWS S3
+google-cloud-storage>=2.10.0  # Google Cloud Storage
+
+# Additional utilities
+python-dotenv>=1.0.0  # For environment variables

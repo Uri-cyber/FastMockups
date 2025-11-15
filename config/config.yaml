@@ -1,0 +1,92 @@
+# FastMockups Configuration File
+# Customize your mockup generation settings here
+
+# Folder paths
+folders:
+  designs: "designs"
+  templates: "templates"
+  output: "mockup_output"
+
+# Template placements (x, y, width, height)
+# Add your template configurations here
+template_placements:
+  template1.png: [100, 150, 400, 400]
+  template2.png: [50, 100, 350, 350]
+
+# Auto-detection settings
+auto_detection:
+  enabled: true
+  method: "contour"  # Options: contour, color, edge, auto
+  min_area_ratio: 0.05
+  max_area_ratio: 0.7
+
+# Visual effects
+effects:
+  shadow:
+    enabled: true
+    offset: [5, 5]
+    blur_radius: 10
+    opacity: 0.5
+    color: [0, 0, 0]
+
+  perspective:
+    enabled: false
+    # Add perspective coefficients if needed
+
+  filters:
+    brightness: 1.0
+    contrast: 1.0
+    saturation: 1.0
+    sharpen: false
+
+# Export settings
+export:
+  formats: ["png", "jpg", "webp"]
+  quality:
+    png:
+      optimize: true
+      compress_level: 6
+    jpg:
+      quality: 95
+      optimize: true
+      progressive: true
+    webp:
+      quality: 90
+      method: 6
+
+# Processing settings
+processing:
+  parallel: true
+  max_workers: 4
+  progress_bar: true
+
+# Cloud storage (optional)
+cloud_storage:
+  enabled: false
+  provider: "s3"  # Options: s3, gcs
+
+  # AWS S3 configuration
+  s3:
+    bucket_name: "my-mockups-bucket"
+    region: "us-east-1"
+    # Use environment variables or ~/.aws/credentials for credentials
+    # access_key_id: ""  # Optional, uses AWS credentials chain if not set
+    # secret_access_key: ""  # Optional
+
+  # Google Cloud Storage configuration
+  gcs:
+    bucket_name: "my-mockups-bucket"
+    project_id: "my-project"
+    # credentials_path: "path/to/service-account.json"  # Optional
+
+# Output naming
+output:
+  pattern: "{design}_{template}_mockup"
+  include_timestamp: false
+  create_subfolders: false
+
+# Logging
+logging:
+  enabled: true
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  file: "mockup_generation.log"
