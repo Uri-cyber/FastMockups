@@ -1,0 +1,4 @@
+# Bulk Product Mockup Generator Dependencies
+
+# Pillow - Python Imaging Library for image processing
+Pillow>=10.0.0
